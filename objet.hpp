@@ -8,6 +8,15 @@ class produit
     std :: string type;
     std :: string genre;
 }; 
+
+class marque
+{
+    int nb_magasins;
+    std :: string entreprise;
+    std :: string pays;
+    int nb_stock_total;
+}
+
 class magasin
 {
     std :: string marque; 
