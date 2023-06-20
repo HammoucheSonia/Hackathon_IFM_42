@@ -1,0 +1,6 @@
+spacialisation dans l'industrie du luxe
+objets : 
+    produit;
+    magasin;
+    marque;
+    entreprise;
