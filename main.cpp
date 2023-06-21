@@ -1,37 +1,33 @@
 #include "objet.hpp"
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <openssl/sha.h>
 
-std::string calculer_hash_produit(const s_produit& produit) {
-    // Concaténer les attributs pertinents du produit en une chaîne de caractères
-    std::stringstream ss;
-    ss << produit.t_marque.nb_magasins
-       << produit.t_marque.entreprise
-       << produit.t_marque.pays
-       << produit.t_marque.nb_stock_total
-       << produit.t_magasin.code_postale
-       << produit.t_magasin.pays
-       << produit.taille
-       << produit.nb_restant
-       << produit.couleur
-       << produit.type
-       << produit.genre;
-    std::string produit_str = ss.str();
+
+std::string calculer_hash_produit(const produit& p) {
+    std::string produit_str =
+        std::to_string(p.t_marque.nb_magasins) +
+        p.t_marque.entreprise +
+        p.t_marque.pays +
+        std::to_string(p.t_marque.nb_stock_total) +
+        std::to_string(p.t_magasin.code_postale) +
+        p.t_magasin.pays +
+        std::to_string(p.taille) +
+        std::to_string(p.nb_restant) +
+        p.couleur +
+        p.type +
+        p.genre;
     
-    // Calculer le hash SHA-256
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(produit_str.c_str()), produit_str.length(), hash);
+    SHA256((unsigned char*)produit_str.c_str(), produit_str.length(), hash);
     
-    // Convertir le hash en une chaîne hexadécimale
-    std::stringstream hash_ss;
+    std::string hash_produit;
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        hash_ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+        char hex[3];
+        sprintf(hex, "%02x", hash[i]);
+        hash_produit += hex;
     }
     
-    return hash_ss.str();
+    return hash_produit;
 }
+
 
 int main()
 {
@@ -53,6 +49,10 @@ int main()
     pantalon.couleur = "bleu";
     pantalon.type = "classique";
     pantalon.genre = "femme";
+
+    
+    std::string hash = calculer_hash_produit(pantalon);
+    std::cout << "Identifiant unique du produit : " << hash << std::endl;
     
     return(0);
 }
